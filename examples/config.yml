@@ -1,0 +1,20 @@
+---
+
+projects:
+  platform:
+    github: "cabify/lana-platform"
+  b2c:
+    github: "cabify/lana-b2c"
+
+groups:
+  libs:
+    repoman:
+      github: "cabify/repoman"
+      go: true
+    go-couchdb:
+      github: "cabify/go-couchdb"
+      go: true 
+    commom:
+      github: "cabify/lana-common"
+      go: true
+  
