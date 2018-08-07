@@ -14,6 +14,7 @@ import (
 type Repo struct {
 	Name   string `yaml:"name"` // Allows name to be overridden (might be useful?)
 	Github string `yaml:"github"`
+	Docker string `yaml:"docker"` // Docker image name
 	Go     bool   `yaml:"go"`
 }
 
