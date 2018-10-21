@@ -1,10 +1,8 @@
 ---
 
 projects:
-  platform:
-    github: "cabify/lana-platform"
-  b2c:
-    github: "cabify/lana-b2c"
+  web:
+    github: "cabify/lana-web"
 
 groups:
   libs:
@@ -13,8 +11,18 @@ groups:
       go: true
     go-couchdb:
       github: "cabify/go-couchdb"
-      go: true 
+      go: true
     commom:
       github: "cabify/lana-common"
       go: true
-  
+
+  # Split `.` into subdirectories: `platform/services`
+  platform.services:
+    ledger:
+      github: "cabify/lana-services-ledger"
+      docker: "lanadev/ledger"
+      go: true
+    signer:
+      github: "cabify/lana-services-signer"
+      docker: "lanadev/signer"
+      go: true

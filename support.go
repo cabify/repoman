@@ -5,20 +5,27 @@ import (
 	"log"
 	"os"
 	"path"
+	"strings"
 
 	"github.com/magefile/mage/sh"
 )
 
 func mkGroupDirs() error {
-	for group, _ := range config.Groups {
-		if _, err := os.Stat(group); os.IsNotExist(err) {
-			fmt.Printf("Creating group: %v\n", group)
-			if err = os.Mkdir(group, os.ModePerm); err != nil {
+	for group := range config.Groups {
+		gpath := groupNameToPath(group)
+		if _, err := os.Stat(gpath); os.IsNotExist(err) {
+			fmt.Printf("Creating group: %v\n", gpath)
+			if err = os.MkdirAll(gpath, os.ModePerm); err != nil {
 				return err
 			}
 		}
 	}
 	return nil
+}
+
+func groupNameToPath(group string) string {
+	p := strings.Split(group, ".")
+	return path.Join(p...)
 }
 
 func cloneGroupRepos() error {
@@ -79,7 +86,8 @@ func cloneRepo(group string, r *Repo) error {
 			}
 		}
 
-		p = path.Join(group, r.Name)
+		gpath := groupNameToPath(group)
+		p = path.Join(gpath, r.Name)
 		if _, err := os.Stat(p); os.IsNotExist(err) {
 			log.Printf("Symlinking Go Repo: %v\n", p)
 			if err = os.Symlink(r.GoProjectPath(), p); err != nil {
@@ -88,10 +96,11 @@ func cloneRepo(group string, r *Repo) error {
 		}
 	} else {
 		// Normal repos are much easier!
-		p := path.Join(group, r.Name)
+		gpath := groupNameToPath(group)
+		p := path.Join(gpath, r.Name)
 		if _, err := os.Stat(p); os.IsNotExist(err) {
 			log.Printf("Cloning Repo %v into %v\n", r.GitRepo(), p)
-			err := sh.Run("git", "-C", group, "clone", r.GitRepo(), r.Name)
+			err := sh.Run("git", "-C", gpath, "clone", r.GitRepo(), r.Name)
 			if err != nil {
 				return err
 			}
@@ -102,7 +111,8 @@ func cloneRepo(group string, r *Repo) error {
 }
 
 func pullRepo(group string, r *Repo) error {
-	p := path.Join(group, r.Name)
+	gpath := groupNameToPath(group)
+	p := path.Join(gpath, r.Name)
 	if _, err := os.Stat(p); err != nil {
 		return err
 	}
@@ -126,9 +136,10 @@ func goGetProjectRepos() error {
 
 func goGetGroupRepos() error {
 	for group, repos := range config.Groups {
+		gpath := groupNameToPath(group)
 		for _, repo := range repos {
 			if repo.Go {
-				if err := goGetRepo(group, repo); err != nil {
+				if err := goGetRepo(gpath, repo); err != nil {
 					return err
 				}
 			}
@@ -138,7 +149,8 @@ func goGetGroupRepos() error {
 }
 
 func goGetRepo(group string, r *Repo) error {
-	p := path.Join(group, r.Name)
+	gpath := groupNameToPath(group)
+	p := path.Join(gpath, r.Name)
 	if _, err := os.Stat(p); err != nil {
 		return err
 	}
