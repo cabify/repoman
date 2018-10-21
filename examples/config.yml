@@ -1,5 +1,8 @@
 ---
 
+# If using split groups, be sure to increase the status depth
+status_depth: 3
+
 projects:
   web:
     github: "cabify/lana-web"

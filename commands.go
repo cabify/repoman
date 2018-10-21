@@ -1,6 +1,7 @@
 package repoman
 
 import (
+	"fmt"
 	"path"
 
 	"github.com/magefile/mage/mg"
@@ -37,7 +38,16 @@ func Get() error {
 // Status provides the status of each sub git repository.
 func Status() error {
 	mg.Deps(parseConfig)
-	return sh.RunV("/bin/sh", path.Join(config.Gopath, "src/github.com/cabify/repoman/scripts/mgitstatus.sh"))
+	cmd := []string{
+		path.Join(config.Gopath, "src/github.com/cabify/repoman/scripts/mgitstatus.sh"),
+	}
+	if config.StatusDepth != 0 {
+		cmd = append(cmd,
+			".",
+			fmt.Sprintf("%d", config.StatusDepth),
+		)
+	}
+	return sh.RunV("/bin/sh", cmd...)
 }
 
 // DockerBuild attempts to build docker images of each project service.

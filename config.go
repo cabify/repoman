@@ -21,10 +21,11 @@ type Repo struct {
 type Group map[string]*Repo
 
 type Config struct {
-	Gopath   string           `yaml:"gotpath"`
-	Projects map[string]*Repo `yaml:"projects"`
-	Groups   map[string]Group `yaml:"groups"`
-	pwd      string           `yaml:"-"` // current working, for reference
+	Gopath      string           `yaml:"gopath"`
+	StatusDepth int              `yaml:"status_depth"`
+	Projects    map[string]*Repo `yaml:"projects"`
+	Groups      map[string]Group `yaml:"groups"`
+	pwd         string           `yaml:"-"` // current working, for reference
 }
 
 var config Config
